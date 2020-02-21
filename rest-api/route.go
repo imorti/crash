@@ -31,3 +31,19 @@ func getPosts(resp http.ResponseWriter, req *http.Request) {
 	resp.WriteHeader(http.StatusOK)
 	resp.Write((result))
 }
+
+func addPosts(resp http.ResponseWriter, req *http.Request) {
+	var post Post
+	err := json.NewDecoder(req.Body).Decode(&post)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		resp.Write([]byte(`{"error": "Error marshalling the request"}`))
+		return
+	}
+	post.Id = len(posts) + 1
+	posts = append(posts, post)
+	resp.Header().Set("Content-type", "application/json")
+	resp.WriteHeader(http.StatusOK)
+	result, err := json.Marshal(posts)
+	resp.Write(result)
+}
