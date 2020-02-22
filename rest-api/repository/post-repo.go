@@ -6,6 +6,7 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"github.com/imorti/crash/rest-api/entity"
+	"google.golang.org/api/iterator"
 )
 
 // PostRepository - interface
@@ -22,13 +23,13 @@ func NewPostRepository() PostRepository {
 }
 
 const (
-	projectId      string = "pragmatic-crash"
+	projectID      string = "pragmatic-crash"
 	collectionName string = "posts"
 )
 
 func (*repo) Save(post *entity.Post) (*entity.Post, error) {
 	ctx := context.Background()
-	client, err := firestore.NewClient(ctx, projectId)
+	client, err := firestore.NewClient(ctx, projectID)
 
 	if err != nil {
 		log.Fatalf("Failed to create new firestore client: %v", err)
@@ -50,7 +51,7 @@ func (*repo) Save(post *entity.Post) (*entity.Post, error) {
 
 func (*repo) FindAll() ([]entity.Post, error) {
 	ctx := context.Background()
-	client, err := firestore.NewClient(ctx, projectId)
+	client, err := firestore.NewClient(ctx, projectID)
 
 	if err != nil {
 		log.Fatalf("Failed to create new firestore client: %v", err)
@@ -58,11 +59,17 @@ func (*repo) FindAll() ([]entity.Post, error) {
 	}
 	defer client.Close()
 	var posts []entity.Post
-	iterator := client.Collection(collectionName).Documents(ctx)
+	it := client.Collection(collectionName).Documents(ctx)
+
 	for {
-		doc, err := iterator.Next()
+
+		doc, err := it.Next()
+		if err == iterator.Done {
+			break
+		}
+
 		if err != nil {
-			log.Fatalf("Failed to create new firestore client: %v", err)
+			log.Fatalf("Failed to iterate through collection: %v", err)
 			return nil, err
 		}
 		post := entity.Post{
