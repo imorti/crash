@@ -62,7 +62,7 @@ func (*repo) FindAll() ([]entity.Post, error) {
 	it := client.Collection(collectionName).Documents(ctx)
 
 	for {
-
+		defer it.Stop()
 		doc, err := it.Next()
 		if err == iterator.Done {
 			break
