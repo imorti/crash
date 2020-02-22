@@ -2,48 +2,40 @@ package main
 
 import (
 	"encoding/json"
+	"math/rand"
 	"net/http"
+
+	"github.com/imorti/crash/rest-api/entity"
+	"github.com/imorti/crash/rest-api/repository"
 )
 
 // Post - to be used in post requests
-type Post struct {
-	Id    int    `json:"id"`
-	Title string `json:"title"`
-	Text  string `json:"text"`
-}
-
 var (
-	posts []Post
+	repo repository.PostRepository = repository.NewPostRepository()
 )
-
-func init() {
-	posts = []Post{Post{Id: 1, Title: "Title 1", Text: "Text 1"}}
-}
 
 func getPosts(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-type", "application/json")
-	result, error := json.Marshal(posts)
-	if error != nil {
+	posts, err := repo.FindAll()
+	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
-		resp.Write([]byte(`{"error": "Error marshalling the posts array}`))
+		resp.Write([]byte(`{"error": "Error getting the posts array}`))
 		return
 	}
 	resp.WriteHeader(http.StatusOK)
-	resp.Write((result))
+	json.NewEncoder(resp).Encode(posts)
 }
 
 func addPosts(resp http.ResponseWriter, req *http.Request) {
-	var post Post
+	var post entity.Post
 	err := json.NewDecoder(req.Body).Decode(&post)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		resp.Write([]byte(`{"error": "Error marshalling the request"}`))
 		return
 	}
-	post.Id = len(posts) + 1
-	posts = append(posts, post)
-	resp.Header().Set("Content-type", "application/json")
+	post.ID = rand.Int63()
+	repo.Save(&post)
 	resp.WriteHeader(http.StatusOK)
-	result, err := json.Marshal(posts)
-	resp.Write(result)
+	json.NewEncoder(resp).Encode(post)
 }
