@@ -10,7 +10,7 @@ import (
 
 // Post - to be used in post requests
 var (
-	repo repository.PostRepository = repository.NewFirestoreRepository()
+	repo repository.PostRepository
 )
 
 // PostService interface
@@ -22,7 +22,8 @@ type PostService interface {
 type service struct{}
 
 // NewPostService - for creating new service
-func NewPostService() PostService {
+func NewPostService(repoPass repository.PostRepository) PostService {
+	repo = repoPass
 	return &service{}
 }
 

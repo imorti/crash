@@ -13,11 +13,12 @@ type controller struct{}
 
 // Post - to be used in post requests
 var (
-	postService service.PostService = service.NewPostService()
+	postService service.PostService
 )
 
 // NewPostController - Constructor for new PostController
-func NewPostController() PostController {
+func NewPostController(service service.PostService) PostController {
+	postService = service
 	return &controller{}
 }
 

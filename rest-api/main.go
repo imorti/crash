@@ -6,11 +6,15 @@ import (
 
 	"github.com/imorti/crash/rest-api/controller"
 	"github.com/imorti/crash/rest-api/http"
+	"github.com/imorti/crash/rest-api/repository"
+	"github.com/imorti/crash/rest-api/service"
 )
 
 var (
+	postRepository repository.PostRepository = repository.NewFirestoreRepository()
+	postService    service.PostService       = service.NewPostService(postRepository)
+	postController controller.PostController = controller.NewPostController(postService)
 	httpRouter     router.Router             = router.NewChiRouter()
-	postController controller.PostController = controller.NewPostController()
 )
 
 func main() {
