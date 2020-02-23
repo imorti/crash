@@ -13,8 +13,9 @@ var (
 	repo repository.PostRepository = repository.NewFirestoreRepository()
 )
 
+// PostService interface
 type PostService interface {
-	Validate(post *entity.Post)
+	Validate(post *entity.Post) error
 	Create(post *entity.Post) (*entity.Post, error)
 	FindAll() ([]entity.Post, error)
 }
@@ -26,7 +27,7 @@ func NewPostService() PostService {
 }
 
 // Validate - validating a post before saving to data store
-func (*service) Validate(post *entity.Post) {
+func (*service) Validate(post *entity.Post) error {
 
 	if post == nil {
 		err := errors.New("The post cannot be empty")
@@ -35,6 +36,7 @@ func (*service) Validate(post *entity.Post) {
 
 	if post.Title == "" {
 		err := errors.New("The post title cannot be empty")
+		return err
 	}
 
 	return nil
@@ -45,7 +47,7 @@ func (*service) Validate(post *entity.Post) {
 func (*service) Create(post *entity.Post) (*entity.Post, error) {
 
 	post.ID = rand.Int63()
-	return repo.Save(&post)
+	return repo.Save(post)
 }
 
 // FindAll - getting all documents in our collection

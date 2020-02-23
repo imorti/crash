@@ -7,8 +7,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type muxRouter struct {
-}
+type muxRouter struct{}
 
 var (
 	muxDispatcher = mux.NewRouter()
@@ -32,6 +31,6 @@ func (*muxRouter) POST(uri string, f func(resp http.ResponseWriter, req *http.Re
 
 // SERVE - serves up our application
 func (*muxRouter) SERVE(port string) {
-	fmt.Printf("Mux HTTP server running on port %v", port)
+	fmt.Printf("Mux HTTP server running on port %v ", port)
 	http.ListenAndServe(port, muxDispatcher)
 }
