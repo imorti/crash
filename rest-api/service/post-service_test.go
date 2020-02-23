@@ -47,6 +47,26 @@ func TestFindAll(t *testing.T) {
 	assert.Equal(t, "B", result[0].Text)
 }
 
+func TestCreate(t *testing.T) {
+	var identifier int64 = 1
+	mockRepo := new(MockRepository)
+	post := entity.Post{ID: identifier, Title: "A", Text: "B"}
+
+	mockRepo.On("Save").Return(&post, nil)
+
+	testService := NewPostService(mockRepo)
+
+	result, err := testService.Create(&post)
+
+	mockRepo.AssertExpectations(t)
+
+	assert.NotNil(t, result.ID)
+	assert.Equal(t, "A", result.Title)
+	assert.Equal(t, "B", result.Text)
+	assert.Nil(t, err)
+
+}
+
 func TestValidateEmptyPost(t *testing.T) {
 	testService := NewPostService(nil)
 
