@@ -9,12 +9,12 @@ import (
 )
 
 var (
-	httpRouter     router.Router             = router.NewMuxRouter()
+	httpRouter     router.Router             = router.NewChiRouter()
 	postController controller.PostController = controller.NewPostController()
 )
 
 func main() {
-	const port string = ":8000"
+	const port string = ":8001"
 
 	httpRouter.GET("/", func(resp http.ResponseWriter, req *http.Request) {
 		fmt.Fprintln(resp, "Server up and running. Well done!")
