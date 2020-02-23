@@ -1,5 +1,14 @@
 package repository
 
+import (
+	"context"
+	"log"
+
+	"cloud.google.com/go/firestore"
+	"github.com/imorti/crash/rest-api/entity"
+	"google.golang.org/api/iterator"
+)
+
 // PostRepository - interface
 type PostRepository interface {
 	Save(post *entity.Post) (*entity.Post, error)
@@ -8,8 +17,8 @@ type PostRepository interface {
 
 type repo struct{}
 
-// NewPostRepository - method for adding repository
-func NewPostRepository() PostRepository {
+// NewFirestoreRepository - method for adding firestore repository
+func NewFirestoreRepository() PostRepository {
 	return &repo{}
 }
 

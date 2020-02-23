@@ -2,21 +2,25 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/imorti/crash/rest-api/http"
+)
+
+var (
+	httpRouter router.Router = router.NewMuxRouter()
 )
 
 func main() {
-	var router = mux.NewRouter()
 	const port string = ":8080"
-	router.HandleFunc("/", func(resp http.ResponseWriter, req *http.Request) {
-		fmt.Fprintln(resp, "Server up and running...")
-	})
-	router.HandleFunc("/posts", getPosts).Methods("GET")
-	router.HandleFunc("/posts", addPosts).Methods("POST")
 
-	log.Println("Server listening on port", port)
-	log.Fatalln(http.ListenAndServe(port, router))
+	httpRouter.GET("/", func(resp http.ResponseWriter, req *http.Request) {
+		fmt.Fprintln(resp, "Server up and running. Well done!")
+	})
+
+	// httpRouter.GET("/posts", getPosts)
+	// httpRouter.POST("/posts", addPosts)
+
+	httpRouter.SERVE(port)
+
 }
